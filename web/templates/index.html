@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. — AI Command Center</title>
+    <meta name="description" content="J.A.R.V.I.S. - Just A Rather Very Intelligent System. Your personal AI command center.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jarvis.css') }}">
+</head>
+<body>
+    <!-- ── Particle Background ──────────────────────────── -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- ── Main Container ───────────────────────────────── -->
+    <div class="jarvis-app">
+
+        <!-- ── Top Bar ──────────────────────────────────── -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <div class="status-dot" id="statusDot"></div>
+                <span class="status-text" id="statusText">INITIALIZING</span>
+            </div>
+            <div class="top-bar-center">
+                <h1 class="jarvis-title">
+                    <span class="title-letter" data-letter="J">J</span><span class="title-dot">.</span><span class="title-letter" data-letter="A">A</span><span class="title-dot">.</span><span class="title-letter" data-letter="R">R</span><span class="title-dot">.</span><span class="title-letter" data-letter="V">V</span><span class="title-dot">.</span><span class="title-letter" data-letter="I">I</span><span class="title-dot">.</span><span class="title-letter" data-letter="S">S</span><span class="title-dot">.</span>
+                </h1>
+                <p class="jarvis-subtitle">Just A Rather Very Intelligent System</p>
+            </div>
+            <div class="top-bar-right">
+                <span class="clock" id="clock"></span>
+                <span class="date" id="dateDisplay"></span>
+            </div>
+        </header>
+
+        <!-- ── Main Grid ────────────────────────────────── -->
+        <main class="main-grid">
+
+            <!-- ── Left Column: System Stats ────────────── -->
+            <aside class="left-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">◇</span> SYSTEM MONITOR
+                </div>
+
+                <!-- Arc Reactor -->
+                <div class="arc-reactor-container">
+                    <div class="arc-reactor" id="arcReactor">
+                        <div class="reactor-ring ring-outer"></div>
+                        <div class="reactor-ring ring-middle"></div>
+                        <div class="reactor-ring ring-inner"></div>
+                        <div class="reactor-core">
+                            <span class="core-value" id="cpuValue">0</span>
+                            <span class="core-label">CPU %</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gauges -->
+                <div class="stat-gauges">
+                    <div class="gauge-item" id="ramGauge">
+                        <div class="gauge-bar">
+                            <div class="gauge-fill" id="ramFill" style="width: 0%"></div>
+                        </div>
+                        <div class="gauge-info">
+                            <span class="gauge-label">RAM</span>
+                            <span class="gauge-value" id="ramValue">0%</span>
+                        </div>
+                    </div>
+                    <div class="gauge-item" id="diskGauge">
+                        <div class="gauge-bar">
+                            <div class="gauge-fill" id="diskFill" style="width: 0%"></div>
+                        </div>
+                        <div class="gauge-info">
+                            <span class="gauge-label">DISK</span>
+                            <span class="gauge-value" id="diskValue">0%</span>
+                        </div>
+                    </div>
+                    <div class="gauge-item" id="netGauge">
+                        <div class="gauge-bar">
+                            <div class="gauge-fill net-fill" id="netFill" style="width: 50%"></div>
+                        </div>
+                        <div class="gauge-info">
+                            <span class="gauge-label">NET</span>
+                            <span class="gauge-value" id="netValue">0 MB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Battery -->
+                <div class="battery-widget" id="batteryWidget">
+                    <div class="battery-icon">
+                        <div class="battery-level" id="batteryLevel"></div>
+                    </div>
+                    <span class="battery-text" id="batteryText">--</span>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-row">
+                        <span class="stat-label">RAM Used</span>
+                        <span class="stat-val" id="ramUsed">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Disk Used</span>
+                        <span class="stat-val" id="diskUsed">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Network ↓</span>
+                        <span class="stat-val" id="netRecv">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Network ↑</span>
+                        <span class="stat-val" id="netSent">--</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ── Center: Chat ─────────────────────────── -->
+            <section class="center-panel">
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-welcome">
+                            <div class="welcome-icon">◈</div>
+                            <h2>Welcome back, Sir.</h2>
+                            <p>All systems are online. How may I assist you today?</p>
+                            <div class="quick-actions">
+                                <button class="quick-btn" onclick="sendQuick('what can you do')">🧠 Capabilities</button>
+                                <button class="quick-btn" onclick="sendQuick('briefing')">☀️ Briefing</button>
+                                <button class="quick-btn" onclick="sendQuick('tell me a joke')">😂 Joke</button>
+                                <button class="quick-btn" onclick="sendQuick('news')">📰 News</button>
+                                <button class="quick-btn" onclick="sendQuick('system info')">💻 System</button>
+                                <button class="quick-btn" onclick="sendQuick('motivate me')">💫 Quote</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Command Input -->
+                <div class="command-bar">
+                    <div class="input-wrapper">
+                        <span class="input-prefix">❯</span>
+                        <input type="text" id="commandInput" placeholder="Ask Jarvis anything..." autocomplete="off" spellcheck="false">
+                        <button class="voice-btn" id="voiceBtn" title="Voice Input">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/>
+                                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                            </svg>
+                        </button>
+                        <button class="send-btn" id="sendBtn" title="Send">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Right Column: Modules ────────────────── -->
+            <aside class="right-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">◇</span> MODULES
+                </div>
+
+                <div class="module-grid">
+                    <div class="module-card" onclick="sendQuick('what can you do')">
+                        <div class="module-icon">🧠</div>
+                        <div class="module-name">AI Chat</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('analyze sentiment I love this project')">
+                        <div class="module-icon">💭</div>
+                        <div class="module-name">Sentiment</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('news tech')">
+                        <div class="module-icon">📰</div>
+                        <div class="module-name">News</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('who is Albert Einstein')">
+                        <div class="module-icon">📚</div>
+                        <div class="module-name">Knowledge</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('calculate 2**10')">
+                        <div class="module-icon">🔢</div>
+                        <div class="module-name">Calculator</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('translate hello to spanish')">
+                        <div class="module-icon">🌍</div>
+                        <div class="module-name">Translator</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="openPanel('notes')">
+                        <div class="module-icon">📝</div>
+                        <div class="module-name">Notes</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="openPanel('tasks')">
+                        <div class="module-icon">📋</div>
+                        <div class="module-name">Tasks</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="openPanel('reminders')">
+                        <div class="module-icon">🔔</div>
+                        <div class="module-name">Reminders</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('generate password')">
+                        <div class="module-icon">🔐</div>
+                        <div class="module-name">Security</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('fun fact')">
+                        <div class="module-icon">🎮</div>
+                        <div class="module-name">Fun</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('system info')">
+                        <div class="module-icon">💻</div>
+                        <div class="module-name">System</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="panel-header" style="margin-top: 20px;">
+                    <span class="panel-icon">◇</span> ACTIVITY
+                </div>
+                <div class="activity-feed" id="activityFeed">
+                    <div class="activity-item">
+                        <span class="activity-time" id="bootTime">--:--</span>
+                        <span class="activity-text">System initialized</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- ── Notification Toast ───────────────────────────── -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ── Slide Panels ─────────────────────────────────── -->
+    <div class="slide-panel" id="notesPanel">
+        <div class="slide-panel-header">
+            <h3>📝 Notes</h3>
+            <button class="slide-close" onclick="closePanel('notes')">✕</button>
+        </div>
+        <div class="slide-panel-body">
+            <div class="input-group">
+                <input type="text" id="noteInput" placeholder="Type a note and press Enter..." class="panel-input">
+            </div>
+            <div class="panel-list" id="notesList"></div>
+        </div>
+    </div>
+
+    <div class="slide-panel" id="tasksPanel">
+        <div class="slide-panel-header">
+            <h3>📋 Tasks</h3>
+            <button class="slide-close" onclick="closePanel('tasks')">✕</button>
+        </div>
+        <div class="slide-panel-body">
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="Add a task..." class="panel-input">
+                <select id="taskPriority" class="panel-select">
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <div class="panel-list" id="tasksList"></div>
+        </div>
+    </div>
+
+    <div class="slide-panel" id="remindersPanel">
+        <div class="slide-panel-header">
+            <h3>🔔 Reminders</h3>
+            <button class="slide-close" onclick="closePanel('reminders')">✕</button>
+        </div>
+        <div class="slide-panel-body">
+            <div class="input-group">
+                <input type="text" id="reminderInput" placeholder="Remind me..." class="panel-input">
+                <input type="number" id="reminderMinutes" value="30" min="1" class="panel-number" title="Minutes">
+                <span class="panel-label">min</span>
+            </div>
+            <div class="panel-list" id="remindersList"></div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/jarvis.js') }}"></script>
+</body>
+</html>

@@ -8,7 +8,7 @@ import platform
 import os
 import time
 import psutil
-from typing import Optional
+from typing import Optional, Tuple
 from config.settings import config
 
 class SystemActions:
