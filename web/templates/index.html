@@ -29,10 +29,21 @@
                 <p class="jarvis-subtitle">Just A Rather Very Intelligent System</p>
             </div>
             <div class="top-bar-right">
+                <button class="theme-btn" id="themeBtn" onclick="cycleTheme()" title="Switch Theme">🌙</button>
                 <span class="clock" id="clock"></span>
                 <span class="date" id="dateDisplay"></span>
             </div>
         </header>
+
+        <!-- ── News Ticker ─────────────────────────────── -->
+        <div class="news-ticker" id="newsTicker">
+            <div class="ticker-label">📰 LIVE</div>
+            <div class="ticker-track">
+                <div class="ticker-content" id="tickerContent">
+                    Loading headlines...
+                </div>
+            </div>
+        </div>
 
         <!-- ── Main Grid ────────────────────────────────── -->
         <main class="main-grid">
@@ -246,6 +257,11 @@
                         <div class="module-name">Scraper</div>
                         <div class="module-status online">ONLINE</div>
                     </div>
+                    <div class="module-card" onclick="openPanel('history')">
+                        <div class="module-icon">📜</div>
+                        <div class="module-name">History</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
                 </div>
 
                 <!-- Notifications -->
@@ -309,6 +325,16 @@
                 <span class="panel-label">min</span>
             </div>
             <div class="panel-list" id="remindersList"></div>
+        </div>
+    </div>
+
+    <div class="slide-panel" id="historyPanel">
+        <div class="slide-panel-header">
+            <h3>📜 Command History</h3>
+            <button class="slide-close" onclick="closePanel('history')">✕</button>
+        </div>
+        <div class="slide-panel-body">
+            <div class="panel-list" id="historyList"></div>
         </div>
     </div>
 

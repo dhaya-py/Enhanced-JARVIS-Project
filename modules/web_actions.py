@@ -33,6 +33,12 @@ class WebActions:
             'netflix': 'https://www.netflix.com',
             'chatgpt': 'https://chat.openai.com',
             'whatsapp': 'https://web.whatsapp.com',
+            'wikipedia': 'https://en.wikipedia.org',
+            'pinterest': 'https://www.pinterest.com',
+            'twitch': 'https://www.twitch.tv',
+            'spotify': 'https://open.spotify.com',
+            'medium': 'https://medium.com',
+            'w3schools': 'https://www.w3schools.com',
         }
         
         if config.DEBUG_MODE:

@@ -666,3 +666,148 @@ function fetchWeather() {
 }
 fetchWeather();
 setInterval(fetchWeather, 300000); // Update every 5 min
+
+// ══════════════════════════════════════════════════════
+// NEWS TICKER
+// ══════════════════════════════════════════════════════
+function fetchNewsTicker() {
+    fetch('/api/news?category=general')
+        .then(r => r.json())
+        .then(data => {
+            const tickerEl = document.getElementById('tickerContent');
+            if (tickerEl && data.success && data.data) {
+                const headlines = data.data;
+                if (Array.isArray(headlines) && headlines.length > 0) {
+                    const items = headlines.slice(0, 10).map(item => {
+                        const title = typeof item === 'string' ? item : (item.title || item.text || '');
+                        return `<span class="ticker-item">${escapeHtml(title)}</span>`;
+                    });
+                    // Duplicate for seamless loop
+                    tickerEl.innerHTML = items.join('<span class="ticker-dot">◆</span>') +
+                        '<span class="ticker-dot">◆</span>' +
+                        items.join('<span class="ticker-dot">◆</span>');
+                }
+            }
+        })
+        .catch(() => {
+            const tickerEl = document.getElementById('tickerContent');
+            if (tickerEl) tickerEl.textContent = 'Unable to load headlines — check your internet connection';
+        });
+}
+fetchNewsTicker();
+setInterval(fetchNewsTicker, 300000); // Refresh every 5 min
+
+// ══════════════════════════════════════════════════════
+// THEME SWITCHER
+// ══════════════════════════════════════════════════════
+const themes = ['default', 'midnight', 'neon'];
+const themeIcons = { default: '🌙', midnight: '⚡', neon: '☀️' };
+let currentThemeIndex = 0;
+
+function applyTheme(theme) {
+    if (theme === 'default') {
+        document.documentElement.removeAttribute('data-theme');
+    } else {
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+    document.getElementById('themeBtn').textContent = themeIcons[theme] || '🌙';
+    localStorage.setItem('jarvis-theme', theme);
+}
+
+function cycleTheme() {
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    const theme = themes[currentThemeIndex];
+    applyTheme(theme);
+    addActivity(`Theme switched to: ${theme}`);
+    showToast('Theme', `Switched to ${theme} theme`, 'info');
+}
+
+// Restore saved theme
+(function loadSavedTheme() {
+    const saved = localStorage.getItem('jarvis-theme') || 'default';
+    currentThemeIndex = themes.indexOf(saved);
+    if (currentThemeIndex < 0) currentThemeIndex = 0;
+    applyTheme(themes[currentThemeIndex]);
+})();
+
+// ══════════════════════════════════════════════════════
+// COMMAND HISTORY PANEL
+// ══════════════════════════════════════════════════════
+// Extend the existing loadPanelData function
+const _originalLoadPanelData = loadPanelData;
+loadPanelData = function(name) {
+    if (name === 'history') {
+        fetch('/api/logs')
+            .then(r => r.json())
+            .then(data => {
+                const list = document.getElementById('historyList');
+                list.innerHTML = '';
+                const logs = data.data || [];
+                logs.slice(0, 30).forEach(log => {
+                    const resp = (log.response || '').substring(0, 80);
+                    list.innerHTML += `
+                        <div class="history-item">
+                            <div class="history-cmd">❯ ${escapeHtml(log.command)}</div>
+                            <div class="history-resp">${escapeHtml(resp)}${log.response && log.response.length > 80 ? '...' : ''}</div>
+                            <div class="history-time">${log.timestamp || ''}</div>
+                        </div>
+                    `;
+                });
+                if (logs.length === 0) {
+                    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);">No command history yet</div>';
+                }
+            });
+    } else {
+        _originalLoadPanelData(name);
+    }
+};
+
+// ══════════════════════════════════════════════════════
+// BOOT-UP GREETING ANIMATION
+// ══════════════════════════════════════════════════════
+(function bootSequence() {
+    // Only play once per session
+    if (sessionStorage.getItem('jarvis-booted')) return;
+    sessionStorage.setItem('jarvis-booted', 'true');
+
+    // Create boot overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'boot-overlay';
+    overlay.innerHTML = `
+        <div class="boot-title" id="bootTitle"></div>
+        <div class="boot-status" id="bootStatus">INITIALIZING</div>
+        <div class="boot-scanline"></div>
+    `;
+    document.body.appendChild(overlay);
+
+    // Animate title letters
+    const title = 'J.A.R.V.I.S.';
+    const titleEl = document.getElementById('bootTitle');
+    let delay = 200;
+    for (let i = 0; i < title.length; i++) {
+        const span = document.createElement('span');
+        span.className = title[i] === '.' ? 'boot-dot' : 'boot-letter';
+        span.textContent = title[i];
+        span.style.animationDelay = delay + 'ms';
+        titleEl.appendChild(span);
+        delay += title[i] === '.' ? 60 : 120;
+    }
+
+    // Status sequence
+    const statusEl = document.getElementById('bootStatus');
+    const statuses = [
+        { text: 'INITIALIZING CORE', time: 800 },
+        { text: 'CALIBRATING MODULES', time: 1600 },
+        { text: 'SYSTEMS ONLINE', time: 2400 }
+    ];
+    statuses.forEach(s => {
+        setTimeout(() => { statusEl.textContent = s.text; }, s.time);
+    });
+
+    // Fade out and remove
+    setTimeout(() => {
+        overlay.classList.add('fade-out');
+        setTimeout(() => overlay.remove(), 800);
+    }, 3200);
+})();
+

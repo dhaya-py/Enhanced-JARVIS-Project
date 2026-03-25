@@ -413,7 +413,10 @@ def process_command(command: str) -> str:
         elif action_type == "tools":
             return handle_tools_action(intent, command)
 
-    # ── Fall back to AI chat ────────────────────────────────────────
+    # ── Fall back: fuzzy suggestions or AI chat ───────────────────
+    suggestions = intent_detector.get_fuzzy_suggestions(command)
+    if suggestions:
+        return suggestions
     return ai_chat.get_response(command)
 
 
@@ -438,9 +441,27 @@ def handle_system_action(intent, command):
         'open_discord': lambda: system_actions.open_application("discord"),
         'open_telegram': lambda: system_actions.open_application("telegram"),
         'open_whatsapp': lambda: system_actions.open_application("whatsapp"),
+        'open_vlc': lambda: system_actions.open_application("vlc"),
+        'open_zoom': lambda: system_actions.open_application("zoom"),
+        'open_teams': lambda: system_actions.open_application("teams"),
+        'open_onenote': lambda: system_actions.open_application("onenote"),
+        'open_outlook': lambda: system_actions.open_application("outlook"),
+        'open_slack': lambda: system_actions.open_application("slack"),
+        'open_obs': lambda: system_actions.open_application("obs"),
+        'open_brave': lambda: system_actions.open_application("brave"),
+        'open_firefox': lambda: system_actions.open_application("firefox"),
+        'open_edge': lambda: system_actions.open_application("edge"),
+        'open_snipping_tool': lambda: system_actions.open_application("snipping tool"),
         'close_window': lambda: system_actions.close_window(),
         'close_chrome': lambda: system_actions.close_application("chrome"),
         'close_notepad': lambda: system_actions.close_application("notepad"),
+        'close_vlc': lambda: system_actions.close_application("vlc"),
+        'close_zoom': lambda: system_actions.close_application("zoom"),
+        'close_teams': lambda: system_actions.close_application("teams"),
+        'close_firefox': lambda: system_actions.close_application("firefox"),
+        'close_edge': lambda: system_actions.close_application("edge"),
+        'close_brave': lambda: system_actions.close_application("brave"),
+        'close_slack': lambda: system_actions.close_application("slack"),
         'close_all': lambda: (True, "Close all is disabled for safety."),
         'take_screenshot': lambda: system_actions.take_screenshot(),
         'lock_screen': lambda: system_actions.lock_screen(),
@@ -481,6 +502,12 @@ def handle_web_action(intent, command):
         'open_stackoverflow': 'stackoverflow',
         'open_chatgpt': 'chatgpt',
         'open_whatsapp_web': 'whatsapp',
+        'open_wikipedia': 'wikipedia',
+        'open_pinterest': 'pinterest',
+        'open_twitch': 'twitch',
+        'open_spotify_web': 'spotify',
+        'open_medium': 'medium',
+        'open_w3schools': 'w3schools',
     }
     if intent in site_map:
         success, msg = web_actions.open_website(site_map[intent])

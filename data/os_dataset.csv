@@ -341,3 +341,74 @@ good morning,greeting,info
 good afternoon,greeting,info
 good evening,greeting,info
 how are you,greeting,info
+open vlc,open_vlc,system
+launch vlc,open_vlc,system
+start vlc,open_vlc,system
+open vlc player,open_vlc,system
+open media player,open_vlc,system
+open zoom,open_zoom,system
+launch zoom,open_zoom,system
+start zoom,open_zoom,system
+open zoom meeting,open_zoom,system
+open teams,open_teams,system
+launch teams,open_teams,system
+start teams,open_teams,system
+open microsoft teams,open_teams,system
+open onenote,open_onenote,system
+launch onenote,open_onenote,system
+open outlook,open_outlook,system
+launch outlook,open_outlook,system
+start outlook,open_outlook,system
+open slack,open_slack,system
+launch slack,open_slack,system
+start slack,open_slack,system
+open obs,open_obs,system
+launch obs,open_obs,system
+open obs studio,open_obs,system
+open brave,open_brave,system
+launch brave,open_brave,system
+start brave browser,open_brave,system
+open firefox,open_firefox,system
+launch firefox,open_firefox,system
+start firefox,open_firefox,system
+open edge,open_edge,system
+launch edge,open_edge,system
+open microsoft edge,open_edge,system
+start edge,open_edge,system
+open snipping tool,open_snipping_tool,system
+launch snipping tool,open_snipping_tool,system
+go to wikipedia,open_wikipedia,web
+open wikipedia,open_wikipedia,web
+wikipedia search,open_wikipedia,web
+go to pinterest,open_pinterest,web
+open pinterest,open_pinterest,web
+go to twitch,open_twitch,web
+open twitch,open_twitch,web
+go to spotify web,open_spotify_web,web
+open spotify web,open_spotify_web,web
+go to medium,open_medium,web
+open medium,open_medium,web
+go to w3schools,open_w3schools,web
+open w3schools,open_w3schools,web
+can you open chrome,open_chrome,system
+please open notepad,open_notepad,system
+could you search google,google_search,web
+can you tell me the time,get_time,info
+would you check the weather,get_weather,info
+can you translate,translate,ai
+please summarize,summarize,ai
+could you calculate,calculate,ai
+can you tell me a joke,tell_joke,entertainment
+please give me a quote,get_quote,entertainment
+can you generate a password,gen_password,tools
+show me my notes,show_notes,productivity
+what are my tasks,show_tasks,productivity
+do I have any reminders,show_reminders,productivity
+can you search for a file,search_file,tools
+close vlc,close_vlc,system
+close zoom,close_zoom,system
+close teams,close_teams,system
+close firefox,close_firefox,system
+close edge,close_edge,system
+close brave,close_brave,system
+close slack,close_slack,system
