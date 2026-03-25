@@ -114,6 +114,12 @@
                         <span class="stat-val" id="netSent">--</span>
                     </div>
                 </div>
+
+                <!-- Weather Widget -->
+                <div class="weather-widget" id="weatherWidget">
+                    <div class="weather-temp">--°C</div>
+                    <div class="weather-desc">Loading...</div>
+                </div>
             </aside>
 
             <!-- ── Center: Chat ─────────────────────────── -->
@@ -131,6 +137,8 @@
                                 <button class="quick-btn" onclick="sendQuick('news')">📰 News</button>
                                 <button class="quick-btn" onclick="sendQuick('system info')">💻 System</button>
                                 <button class="quick-btn" onclick="sendQuick('motivate me')">💫 Quote</button>
+                                <button class="quick-btn" onclick="sendQuick('show processes')">⚙️ Processes</button>
+                                <button class="quick-btn" onclick="sendQuick('fun fact')">🎲 Fun Fact</button>
                             </div>
                         </div>
                     </div>
@@ -221,6 +229,21 @@
                     <div class="module-card" onclick="sendQuick('system info')">
                         <div class="module-icon">💻</div>
                         <div class="module-name">System</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('show processes')">
+                        <div class="module-icon">⚙️</div>
+                        <div class="module-name">Processes</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('clipboard history')">
+                        <div class="module-icon">📋</div>
+                        <div class="module-name">Clipboard</div>
+                        <div class="module-status online">ONLINE</div>
+                    </div>
+                    <div class="module-card" onclick="sendQuick('scrape example.com')">
+                        <div class="module-icon">🕷️</div>
+                        <div class="module-name">Scraper</div>
                         <div class="module-status online">ONLINE</div>
                     </div>
                 </div>

@@ -29,6 +29,10 @@ class WebActions:
             'instagram': 'https://www.instagram.com',
             'reddit': 'https://www.reddit.com',
             'stackoverflow': 'https://stackoverflow.com',
+            'amazon': 'https://www.amazon.com',
+            'netflix': 'https://www.netflix.com',
+            'chatgpt': 'https://chat.openai.com',
+            'whatsapp': 'https://web.whatsapp.com',
         }
         
         if config.DEBUG_MODE:

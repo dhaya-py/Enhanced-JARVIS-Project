@@ -2,84 +2,342 @@ command,intent,action_type
 open notepad,open_notepad,system
 launch notepad,open_notepad,system
 start notepad,open_notepad,system
+run notepad,open_notepad,system
 open chrome,open_chrome,system
 open google chrome,open_chrome,system
 launch chrome,open_chrome,system
 start chrome,open_chrome,system
+run chrome,open_chrome,system
 open calculator,open_calculator,system
 launch calculator,open_calculator,system
 start calculator,open_calculator,system
+run calculator,open_calculator,system
 open file explorer,open_explorer,system
 open explorer,open_explorer,system
 launch file explorer,open_explorer,system
+open my computer,open_explorer,system
+open this pc,open_explorer,system
+open command prompt,open_cmd,system
+open cmd,open_cmd,system
+launch cmd,open_cmd,system
+open terminal,open_cmd,system
+open powershell,open_powershell,system
+launch powershell,open_powershell,system
+open paint,open_paint,system
+launch paint,open_paint,system
+open word,open_word,system
+launch word,open_word,system
+open excel,open_excel,system
+launch excel,open_excel,system
+open powerpoint,open_powerpoint,system
+launch powerpoint,open_powerpoint,system
+open task manager,open_taskmgr,system
+launch task manager,open_taskmgr,system
+task manager,open_taskmgr,system
+open settings,open_settings,system
+open control panel,open_control_panel,system
+launch control panel,open_control_panel,system
+open vscode,open_vscode,system
+launch vscode,open_vscode,system
+open visual studio code,open_vscode,system
+code editor,open_vscode,system
+open spotify,open_spotify,system
+launch spotify,open_spotify,system
+open discord,open_discord,system
+launch discord,open_discord,system
+open telegram,open_telegram,system
+launch telegram,open_telegram,system
+open whatsapp,open_whatsapp,system
+launch whatsapp,open_whatsapp,system
 close window,close_window,system
 close this,close_window,system
 close current window,close_window,system
 close chrome,close_chrome,system
+kill chrome,close_chrome,system
 close notepad,close_notepad,system
+kill notepad,close_notepad,system
+close all windows,close_all,system
+minimize window,minimize_window,system
+minimize this,minimize_window,system
+maximize window,maximize_window,system
+maximize this,maximize_window,system
 what is the time,get_time,info
 tell me the time,get_time,info
 what time is it,get_time,info
 current time,get_time,info
+time now,get_time,info
+show me the time,get_time,info
+time please,get_time,info
 what is the date,get_date,info
 tell me the date,get_date,info
 what date is it,get_date,info
 today's date,get_date,info
+show me the date,get_date,info
+what day is it,get_date,info
+what is today,get_date,info
 search google for,google_search,web
 search for,google_search,web
 google,google_search,web
 look up,google_search,web
+search the web,google_search,web
+find on google,google_search,web
+google search,google_search,web
 open youtube,open_youtube,web
 go to youtube,open_youtube,web
 launch youtube,open_youtube,web
+youtube,open_youtube,web
 open facebook,open_facebook,web
+go to facebook,open_facebook,web
 open twitter,open_twitter,web
+go to twitter,open_twitter,web
+open x,open_twitter,web
 open linkedin,open_linkedin,web
+go to linkedin,open_linkedin,web
 open github,open_github,web
+go to github,open_github,web
+open instagram,open_instagram,web
+go to instagram,open_instagram,web
+open reddit,open_reddit,web
+go to reddit,open_reddit,web
+open whatsapp web,open_whatsapp_web,web
+open gmail,open_gmail,web
+go to gmail,open_gmail,web
+open amazon,open_amazon,web
+go to amazon,open_amazon,web
+open netflix,open_netflix,web
+go to netflix,open_netflix,web
+open stackoverflow,open_stackoverflow,web
+go to stack overflow,open_stackoverflow,web
+open chatgpt,open_chatgpt,web
+go to chatgpt,open_chatgpt,web
 weather,get_weather,info
 weather forecast,get_weather,info
 how is the weather,get_weather,info
 temperature,get_weather,info
-send email,send_email,action
-compose email,send_email,action
-write email,send_email,action
-play music,play_music,media
-play song,play_music,media
-play a song,play_music,media
-stop music,stop_music,media
-pause music,stop_music,media
-volume up,volume_up,system
-increase volume,volume_up,system
-volume down,volume_down,system
-decrease volume,volume_down,system
-mute,mute_volume,system
-unmute,unmute_volume,system
+what is the weather,get_weather,info
+weather today,get_weather,info
+is it going to rain,get_weather,info
+tell me the weather,get_weather,info
 take screenshot,take_screenshot,system
 capture screen,take_screenshot,system
 screenshot,take_screenshot,system
+screen capture,take_screenshot,system
+grab screen,take_screenshot,system
 lock screen,lock_screen,system
 lock computer,lock_screen,system
 lock my pc,lock_screen,system
+lock system,lock_screen,system
 shutdown,shutdown_system,system
 shut down,shutdown_system,system
 turn off computer,shutdown_system,system
+power off,shutdown_system,system
+shutdown pc,shutdown_system,system
 restart,restart_system,system
 restart computer,restart_system,system
 reboot,restart_system,system
+restart pc,restart_system,system
 sleep,sleep_system,system
 put computer to sleep,sleep_system,system
+hibernate,sleep_system,system
+sleep mode,sleep_system,system
+volume up,volume_up,system
+increase volume,volume_up,system
+louder,volume_up,system
+turn up volume,volume_up,system
+volume down,volume_down,system
+decrease volume,volume_down,system
+quieter,volume_down,system
+turn down volume,volume_down,system
+mute,mute_volume,system
+mute volume,mute_volume,system
+unmute,unmute_volume,system
+unmute volume,unmute_volume,system
+brightness up,brightness_up,system
+increase brightness,brightness_up,system
+brighter,brightness_up,system
+brightness down,brightness_down,system
+decrease brightness,brightness_down,system
+dimmer,brightness_down,system
 who are you,about_jarvis,info
 what is your name,about_jarvis,info
 tell me about yourself,about_jarvis,info
 what can you do,about_jarvis,info
+introduce yourself,about_jarvis,info
+your capabilities,about_jarvis,info
 help,show_help,info
 commands,show_help,info
 what commands,show_help,info
+show help,show_help,info
+list commands,show_help,info
+what can I say,show_help,info
 thank you,acknowledge,info
 thanks,acknowledge,info
 good job,acknowledge,info
+well done,acknowledge,info
+nice work,acknowledge,info
+you are awesome,acknowledge,info
+great job,acknowledge,info
 goodbye,exit,control
 bye,exit,control
 exit,exit,control
 quit,exit,control
+see you later,exit,control
+goodnight,exit,control
 stop,stop,control
+stop listening,stop,control
+pause,stop,control
+tell me a joke,tell_joke,entertainment
+joke,tell_joke,entertainment
+make me laugh,tell_joke,entertainment
+say something funny,tell_joke,entertainment
+funny,tell_joke,entertainment
+another joke,tell_joke,entertainment
+give me a quote,get_quote,entertainment
+motivate me,get_quote,entertainment
+motivation,get_quote,entertainment
+inspirational quote,get_quote,entertainment
+inspire me,get_quote,entertainment
+motivational quote,get_quote,entertainment
+quote of the day,get_quote,entertainment
+fun fact,get_fun_fact,entertainment
+interesting fact,get_fun_fact,entertainment
+did you know,get_fun_fact,entertainment
+tell me something interesting,get_fun_fact,entertainment
+random fact,get_fun_fact,entertainment
+trivia,trivia_game,entertainment
+play trivia,trivia_game,entertainment
+quiz me,trivia_game,entertainment
+trivia game,trivia_game,entertainment
+news,get_news,info
+latest news,get_news,info
+headlines,get_news,info
+whats happening,get_news,info
+top stories,get_news,info
+current events,get_news,info
+news update,get_news,info
+tech news,get_tech_news,info
+technology news,get_tech_news,info
+sports news,get_sports_news,info
+world news,get_world_news,info
+science news,get_science_news,info
+business news,get_business_news,info
+add note,add_note,productivity
+save note,add_note,productivity
+write note,add_note,productivity
+note this,add_note,productivity
+take a note,add_note,productivity
+remember this,add_note,productivity
+jot this down,add_note,productivity
+show notes,show_notes,productivity
+my notes,show_notes,productivity
+list notes,show_notes,productivity
+read notes,show_notes,productivity
+view notes,show_notes,productivity
+remind me,set_reminder,productivity
+set reminder,set_reminder,productivity
+set alarm,set_reminder,productivity
+reminder,set_reminder,productivity
+don't let me forget,set_reminder,productivity
+show reminders,show_reminders,productivity
+my reminders,show_reminders,productivity
+list reminders,show_reminders,productivity
+view reminders,show_reminders,productivity
+add task,add_task,productivity
+new task,add_task,productivity
+add todo,add_task,productivity
+to do,add_task,productivity
+create task,add_task,productivity
+show tasks,show_tasks,productivity
+my tasks,show_tasks,productivity
+list tasks,show_tasks,productivity
+to do list,show_tasks,productivity
+view tasks,show_tasks,productivity
+pending tasks,show_tasks,productivity
+briefing,daily_briefing,info
+daily briefing,daily_briefing,info
+morning briefing,daily_briefing,info
+good morning,daily_briefing,info
+daily summary,daily_briefing,info
+whats on today,daily_briefing,info
+analyze sentiment,analyze_sentiment,ai
+sentiment of,analyze_sentiment,ai
+how does this sound,analyze_sentiment,ai
+sentiment analysis,analyze_sentiment,ai
+calculate,calculate,ai
+calc,calculate,ai
+what is,calculate,ai
+do the math,calculate,ai
+compute,calculate,ai
+convert,unit_convert,ai
+convert units,unit_convert,ai
+translate,translate,ai
+how to say,translate,ai
+say in,translate,ai
+translation,translate,ai
+summarize,summarize,ai
+summary of,summarize,ai
+give me a summary,summarize,ai
+tldr,summarize,ai
+who is,knowledge_search,ai
+what is a,knowledge_search,ai
+tell me about,knowledge_search,ai
+define,knowledge_search,ai
+meaning of,knowledge_search,ai
+wikipedia,knowledge_search,ai
+knowledge,knowledge_search,ai
+generate password,gen_password,tools
+password,gen_password,tools
+random password,gen_password,tools
+secure password,gen_password,tools
+strong password,gen_password,tools
+find file,search_file,tools
+search file,search_file,tools
+locate file,search_file,tools
+where is file,search_file,tools
+system info,system_info,system
+system status,system_info,system
+system monitor,system_info,system
+pc status,system_info,system
+computer status,system_info,system
+check system,system_info,system
+how is my pc,system_info,system
+show processes,list_processes,system
+running processes,list_processes,system
+what is running,list_processes,system
+process list,list_processes,system
+active processes,list_processes,system
+kill process,kill_process,system
+end process,kill_process,system
+stop process,kill_process,system
+terminate process,kill_process,system
+copy to clipboard,clipboard_copy,tools
+clipboard,clipboard_show,tools
+show clipboard,clipboard_show,tools
+clipboard history,clipboard_show,tools
+what did I copy,clipboard_show,tools
+scrape website,web_scrape,tools
+extract text from,web_scrape,tools
+get text from website,web_scrape,tools
+read webpage,web_scrape,tools
+ip address,get_ip,info
+my ip,get_ip,info
+what is my ip,get_ip,info
+disk space,disk_usage,system
+storage space,disk_usage,system
+how much space,disk_usage,system
+check storage,disk_usage,system
+battery status,battery_status,system
+battery level,battery_status,system
+how much battery,battery_status,system
+battery percentage,battery_status,system
+clear chat,clear_chat,control
+clear screen,clear_chat,control
+reset chat,clear_chat,control
+hello,greeting,info
+hi,greeting,info
+hey,greeting,info
+howdy,greeting,info
+good morning,greeting,info
+good afternoon,greeting,info
+good evening,greeting,info
+how are you,greeting,info

@@ -1135,6 +1135,55 @@ body {
 }
 
 /* ══════════════════════════════════════════════════════
+   WEATHER WIDGET
+   ══════════════════════════════════════════════════════ */
+.weather-widget {
+    margin-top: 16px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(0, 128, 255, 0.05));
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.weather-widget::before {
+    content: '☁️';
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 18px;
+    opacity: 0.3;
+}
+
+.weather-temp {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.weather-desc {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: capitalize;
+    margin-bottom: 8px;
+}
+
+.weather-details {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+}
+
+/* ══════════════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════════════ */
 @media (max-width: 1200px) {

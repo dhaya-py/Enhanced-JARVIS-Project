@@ -63,6 +63,13 @@ socket.on('status', (data) => {
 
 socket.on('response', (data) => {
     removeTyping();
+    // Handle special commands
+    if (data.text === '__CLEAR_CHAT__') {
+        chatMessages.innerHTML = '';
+        addActivity('Chat cleared');
+        showToast('Chat', 'Chat history cleared', 'info');
+        return;
+    }
     addMessage(data.text, 'bot', data.timestamp);
     addActivity(`Responded to: "${data.command.substring(0, 30)}..."`);
 });
@@ -634,3 +641,28 @@ console.log('%c J.A.R.V.I.S. %c Online ',
     'background: #0080ff; color: white; padding: 4px 8px; border-radius: 4px 0 0 4px; font-weight: bold;',
     'background: #00d4ff; color: black; padding: 4px 8px; border-radius: 0 4px 4px 0;'
 );
+
+// ══════════════════════════════════════════════════════
+// WEATHER WIDGET
+// ══════════════════════════════════════════════════════
+function fetchWeather() {
+    fetch('/api/weather?city=auto')
+        .then(r => r.json())
+        .then(data => {
+            const el = document.getElementById('weatherWidget');
+            if (el && data.success && data.data) {
+                const w = data.data;
+                el.innerHTML = `
+                    <div class="weather-temp">${w.temp}°C</div>
+                    <div class="weather-desc">${w.desc}</div>
+                    <div class="weather-details">
+                        <span>💧 ${w.humidity}%</span>
+                        <span>🌬️ ${w.wind} km/h</span>
+                    </div>
+                `;
+            }
+        })
+        .catch(() => {});
+}
+fetchWeather();
+setInterval(fetchWeather, 300000); // Update every 5 min

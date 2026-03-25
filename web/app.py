@@ -39,6 +39,9 @@ from modules.planner import task_planner
 from modules.entertainment import entertainment
 from modules.security_tools import security_tools
 from modules.file_manager import file_manager
+from modules.clipboard_manager import clipboard_manager
+from modules.process_manager import process_manager
+from modules.web_scraper import web_scraper
 
 app = Flask(__name__,
             template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
@@ -149,6 +152,40 @@ def api_news():
     category = request.args.get('category', 'tech')
     news = news_fetcher.get_news(category)
     return jsonify({'success': True, 'data': news})
+
+@app.route('/api/processes')
+def api_processes():
+    """Get running processes"""
+    summary = process_manager.get_summary()
+    return jsonify({'success': True, 'data': summary})
+
+@app.route('/api/clipboard')
+def api_clipboard():
+    """Get clipboard history"""
+    history = clipboard_manager.get_history_list()
+    return jsonify({'success': True, 'data': history})
+
+@app.route('/api/weather')
+def api_weather():
+    """Get weather info"""
+    city = request.args.get('city', 'London')
+    try:
+        import requests as req
+        response = req.get(f'https://wttr.in/{city}?format=j1', timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            current = data['current_condition'][0]
+            return jsonify({'success': True, 'data': {
+                'temp': current.get('temp_C', '--'),
+                'feels_like': current.get('FeelsLikeC', '--'),
+                'humidity': current.get('humidity', '--'),
+                'desc': current.get('weatherDesc', [{}])[0].get('value', 'Unknown'),
+                'wind': current.get('windspeedKmph', '--'),
+                'city': city
+            }})
+    except:
+        pass
+    return jsonify({'success': False, 'data': None})
 
 @app.route('/api/logs')
 def api_logs():
@@ -313,9 +350,47 @@ def process_command(command: str) -> str:
             return file_manager.search_files(name)
         return "What file are you looking for?"
 
+    # Process management
+    if cmd.startswith(('show processes', 'running processes', 'list processes', 'active processes', 'what is running')):
+        return process_manager.list_processes()
+
+    if cmd.startswith(('kill process', 'end process', 'terminate process', 'stop process')):
+        name = cmd.replace('kill process', '').replace('end process', '').replace('terminate process', '').replace('stop process', '').strip()
+        if name:
+            return process_manager.kill_process(name)
+        return "Which process should I terminate? Give me a name or PID."
+
+    # Clipboard
+    if cmd.startswith(('clipboard', 'show clipboard', 'clipboard history', 'what did i copy')):
+        return clipboard_manager.get_history()
+
+    # Web scraper
+    if cmd.startswith(('scrape', 'extract text from', 'read webpage')):
+        url = cmd.replace('scrape', '').replace('extract text from', '').replace('read webpage', '').strip()
+        if url:
+            return web_scraper.scrape_text(url)
+        return "Please provide a URL to scrape. Example: scrape example.com"
+
+    # Disk usage
+    if cmd in ('disk space', 'storage space', 'disk usage', 'check storage', 'how much space'):
+        return file_manager.get_disk_usage()
+
+    # IP address
+    if cmd in ('ip address', 'my ip', 'what is my ip'):
+        try:
+            import requests as req
+            ip = req.get('https://api.ipify.org', timeout=5).text
+            return f"🌐 Your public IP address: **{ip}**"
+        except:
+            return "❌ Could not fetch your IP address. Check internet connection."
+
     # System info
-    if cmd in ('system info', 'system status', 'system monitor', 'pc status', 'computer status'):
+    if cmd in ('system info', 'system status', 'system monitor', 'pc status', 'computer status', 'check system', 'how is my pc'):
         return get_system_info_text()
+
+    # Clear chat
+    if cmd in ('clear chat', 'clear screen', 'reset chat'):
+        return '__CLEAR_CHAT__'
 
     # ── Fall through to intent detection ────────────────────────────
     intent, action_type, confidence = intent_detector.detect_intent(command)
@@ -329,6 +404,14 @@ def process_command(command: str) -> str:
             return handle_info_action(intent, command)
         elif action_type == "control":
             return handle_control(intent, command)
+        elif action_type == "entertainment":
+            return handle_entertainment(intent, command)
+        elif action_type == "productivity":
+            return handle_productivity(intent, command)
+        elif action_type == "ai":
+            return handle_ai_action(intent, command)
+        elif action_type == "tools":
+            return handle_tools_action(intent, command)
 
     # ── Fall back to AI chat ────────────────────────────────────────
     return ai_chat.get_response(command)
@@ -341,18 +424,45 @@ def handle_system_action(intent, command):
         'open_chrome': lambda: system_actions.open_application("chrome"),
         'open_calculator': lambda: system_actions.open_application("calculator"),
         'open_explorer': lambda: system_actions.open_application("explorer"),
+        'open_cmd': lambda: system_actions.open_application("cmd"),
+        'open_powershell': lambda: system_actions.open_application("powershell"),
+        'open_paint': lambda: system_actions.open_application("paint"),
+        'open_taskmgr': lambda: system_actions.open_application("taskmgr"),
+        'open_settings': lambda: system_actions.open_application("settings"),
+        'open_control_panel': lambda: system_actions.open_application("control panel"),
+        'open_vscode': lambda: system_actions.open_application("vscode"),
+        'open_word': lambda: system_actions.open_application("word"),
+        'open_excel': lambda: system_actions.open_application("excel"),
+        'open_powerpoint': lambda: system_actions.open_application("powerpoint"),
+        'open_spotify': lambda: system_actions.open_application("spotify"),
+        'open_discord': lambda: system_actions.open_application("discord"),
+        'open_telegram': lambda: system_actions.open_application("telegram"),
+        'open_whatsapp': lambda: system_actions.open_application("whatsapp"),
         'close_window': lambda: system_actions.close_window(),
         'close_chrome': lambda: system_actions.close_application("chrome"),
         'close_notepad': lambda: system_actions.close_application("notepad"),
+        'close_all': lambda: (True, "Close all is disabled for safety."),
         'take_screenshot': lambda: system_actions.take_screenshot(),
         'lock_screen': lambda: system_actions.lock_screen(),
         'shutdown_system': lambda: system_actions.shutdown_system(),
         'restart_system': lambda: system_actions.restart_system(),
         'sleep_system': lambda: system_actions.sleep_system(),
+        'system_info': lambda: (True, get_system_info_text()),
+        'list_processes': lambda: (True, process_manager.list_processes()),
+        'disk_usage': lambda: (True, file_manager.get_disk_usage()),
+        'battery_status': lambda: (True, get_battery_text()),
     }
+    if intent == 'kill_process':
+        name = command.lower().replace('kill process', '').replace('end process', '').replace('stop process', '').replace('terminate process', '').strip()
+        if name:
+            return process_manager.kill_process(name)
+        return "Which process should I terminate?"
     if intent in action_map:
-        success, msg = action_map[intent]()
-        return msg
+        result = action_map[intent]()
+        if isinstance(result, tuple):
+            success, msg = result
+            return msg
+        return str(result)
     return f"System action '{intent}' is not yet implemented"
 
 def handle_web_action(intent, command):
@@ -363,6 +473,14 @@ def handle_web_action(intent, command):
         'open_twitter': 'twitter',
         'open_linkedin': 'linkedin',
         'open_github': 'github',
+        'open_instagram': 'instagram',
+        'open_reddit': 'reddit',
+        'open_gmail': 'gmail',
+        'open_amazon': 'amazon',
+        'open_netflix': 'netflix',
+        'open_stackoverflow': 'stackoverflow',
+        'open_chatgpt': 'chatgpt',
+        'open_whatsapp_web': 'whatsapp',
     }
     if intent in site_map:
         success, msg = web_actions.open_website(site_map[intent])
@@ -383,22 +501,158 @@ def handle_info_action(intent, command):
         'about_jarvis': lambda: info_provider.get_about_jarvis(),
         'show_help': lambda: info_provider.get_help(),
         'acknowledge': lambda: info_provider.acknowledge(),
+        'greeting': lambda: ai_chat.get_response(command),
+        'daily_briefing': lambda: generate_briefing(),
     }
     if intent == 'get_weather':
         city = "London"
         success, msg = info_provider.get_weather(city)
         return msg
+    if intent in ('get_news', 'get_tech_news', 'get_sports_news', 'get_world_news', 'get_science_news', 'get_business_news'):
+        cat_map = {'get_news': 'general', 'get_tech_news': 'tech', 'get_sports_news': 'sports', 'get_world_news': 'world', 'get_science_news': 'science', 'get_business_news': 'business'}
+        return news_fetcher.get_news_text(cat_map.get(intent, 'general'))
+    if intent == 'get_ip':
+        try:
+            import requests as req
+            ip = req.get('https://api.ipify.org', timeout=5).text
+            return f"🌐 Your public IP address: **{ip}**"
+        except:
+            return "❌ Could not fetch IP address."
     if intent in info_map:
         return info_map[intent]()
     return ai_chat.get_response(command)
+
+def handle_entertainment(intent, command):
+    """Handle entertainment-related intents"""
+    ent_map = {
+        'tell_joke': lambda: entertainment.get_joke(),
+        'get_quote': lambda: entertainment.get_quote(),
+        'get_fun_fact': lambda: entertainment.get_fun_fact(),
+        'trivia_game': lambda: entertainment.get_trivia(),
+    }
+    if intent in ent_map:
+        return ent_map[intent]()
+    return entertainment.get_joke()
+
+def handle_productivity(intent, command):
+    """Handle productivity-related intents"""
+    if intent == 'add_note':
+        text = command.lower()
+        for prefix in ['add note', 'save note', 'write note', 'note this', 'take a note', 'remember this', 'jot this down']:
+            text = text.replace(prefix, '')
+        text = text.strip()
+        if text:
+            return notes_manager.add_note_quick(text)
+        return "What would you like to note down?"
+    if intent == 'show_notes':
+        return notes_manager.get_notes_text()
+    if intent == 'set_reminder':
+        text = command.lower()
+        for prefix in ['remind me', 'set reminder', 'set alarm', 'reminder', "don't let me forget"]:
+            text = text.replace(prefix, '')
+        text = text.strip()
+        if text:
+            return reminder_manager.add_reminder_quick(text)
+        return "What would you like to be reminded about?"
+    if intent == 'show_reminders':
+        return reminder_manager.get_reminders_text()
+    if intent == 'add_task':
+        text = command.lower()
+        for prefix in ['add task', 'new task', 'add todo', 'to do', 'create task']:
+            text = text.replace(prefix, '')
+        text = text.strip()
+        if text:
+            return task_planner.add_task_quick(text)
+        return "What task would you like to add?"
+    if intent == 'show_tasks':
+        return task_planner.get_tasks_text()
+    return "Productivity action not recognized."
+
+def handle_ai_action(intent, command):
+    """Handle AI/intelligence intents"""
+    if intent == 'analyze_sentiment':
+        text = command.lower()
+        for prefix in ['analyze sentiment', 'sentiment of', 'how does this sound', 'sentiment analysis']:
+            text = text.replace(prefix, '')
+        text = text.strip()
+        if text:
+            return sentiment_analyzer.analyze(text)
+        return "Please provide text to analyze."
+    if intent == 'calculate':
+        expr = command.lower()
+        for prefix in ['calculate', 'calc', 'what is', 'do the math', 'compute']:
+            expr = expr.replace(prefix, '')
+        return smart_calculator.calculate(expr.strip())
+    if intent == 'unit_convert':
+        return smart_calculator.convert(command)
+    if intent == 'translate':
+        return translator.translate(command)
+    if intent == 'summarize':
+        text = command.lower()
+        for prefix in ['summarize', 'summary of', 'give me a summary', 'tldr']:
+            text = text.replace(prefix, '')
+        text = text.strip()
+        if text:
+            return text_summarizer.summarize(text)
+        return "Please provide text to summarize."
+    if intent == 'knowledge_search':
+        query = command.lower()
+        for prefix in ['who is', 'what is a', 'what is', 'tell me about', 'define', 'meaning of', 'wikipedia', 'knowledge']:
+            query = query.replace(prefix, '')
+        query = query.strip()
+        if query:
+            return knowledge_base.search(query)
+    return ai_chat.get_response(command)
+
+def handle_tools_action(intent, command):
+    """Handle tools-related intents"""
+    if intent == 'gen_password':
+        return security_tools.generate_password()
+    if intent == 'search_file':
+        name = command.lower()
+        for prefix in ['find file', 'search file', 'locate file', 'where is file']:
+            name = name.replace(prefix, '')
+        name = name.strip()
+        if name:
+            return file_manager.search_files(name)
+        return "What file are you looking for?"
+    if intent == 'clipboard_show':
+        return clipboard_manager.get_history()
+    if intent == 'clipboard_copy':
+        text = command.replace('copy to clipboard', '').strip()
+        if text:
+            return clipboard_manager.copy(text)
+        return "What would you like to copy?"
+    if intent == 'web_scrape':
+        url = command.lower()
+        for prefix in ['scrape website', 'extract text from', 'get text from website', 'read webpage', 'scrape']:
+            url = url.replace(prefix, '')
+        url = url.strip()
+        if url:
+            return web_scraper.scrape_text(url)
+        return "Please provide a URL to scrape."
+    return "Tool action not recognized."
 
 def handle_control(intent, command):
     """Handle control commands"""
     if intent == 'stop':
         return "Jarvis is in standby mode."
     elif intent == 'exit':
-        return "Goodbye! Jarvis signing off."
+        return "Goodbye! Jarvis signing off. 👋"
+    elif intent == 'clear_chat':
+        return '__CLEAR_CHAT__'
     return "Control action not recognized"
+
+def get_battery_text():
+    """Get battery status text"""
+    try:
+        battery = psutil.sensors_battery()
+        if battery:
+            plug = '⚡ Plugged in' if battery.power_plugged else '🔋 On battery'
+            return f"🔋 Battery: {battery.percent}% | {plug}"
+        return "🔋 No battery detected (desktop PC)"
+    except:
+        return "Unable to get battery info"
 
 def get_system_info_text():
     """Get formatted system info"""
