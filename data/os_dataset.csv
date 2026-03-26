@@ -412,3 +412,22 @@ close firefox,close_firefox,system
 close edge,close_edge,system
 close brave,close_brave,system
 close slack,close_slack,system
+send an email,send_email,productivity
+email john that i am late,send_email,productivity
+send email to sarah saying hello,send_email,productivity
+can you send an email,send_email,productivity
+compose new email,send_email,productivity
+play music,media_play_pause,entertainment
+pause music,media_play_pause,entertainment
+play song,media_play_pause,entertainment
+pause song,media_play_pause,entertainment
+stop music,media_play_pause,entertainment
+start playing music,media_play_pause,entertainment
+next track,media_next,entertainment
+next song,media_next,entertainment
+skip track,media_next,entertainment
+skip this song,media_next,entertainment
+previous track,media_previous,entertainment
+previous song,media_previous,entertainment
+go back a track,media_previous,entertainment
+play the last song again,media_previous,entertainment

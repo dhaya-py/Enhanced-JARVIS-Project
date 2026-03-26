@@ -42,6 +42,8 @@ from modules.file_manager import file_manager
 from modules.clipboard_manager import clipboard_manager
 from modules.process_manager import process_manager
 from modules.web_scraper import web_scraper
+from modules.email_manager import email_manager
+from modules.music_controller import music_controller
 
 app = Flask(__name__,
             template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
@@ -556,6 +558,9 @@ def handle_entertainment(intent, command):
         'get_quote': lambda: entertainment.get_quote(),
         'get_fun_fact': lambda: entertainment.get_fun_fact(),
         'trivia_game': lambda: entertainment.get_trivia(),
+        'media_play_pause': lambda: music_controller.play_pause(),
+        'media_next': lambda: music_controller.next_track(),
+        'media_previous': lambda: music_controller.previous_track(),
     }
     if intent in ent_map:
         return ent_map[intent]()
@@ -593,6 +598,8 @@ def handle_productivity(intent, command):
         return "What task would you like to add?"
     if intent == 'show_tasks':
         return task_planner.get_tasks_text()
+    if intent == 'send_email':
+        return email_manager.send_email(command)
     return "Productivity action not recognized."
 
 def handle_ai_action(intent, command):
