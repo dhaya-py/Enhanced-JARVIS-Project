@@ -1,0 +1,85 @@
+command,intent,action_type
+open notepad,open_notepad,system
+launch notepad,open_notepad,system
+start notepad,open_notepad,system
+open chrome,open_chrome,system
+open google chrome,open_chrome,system
+launch chrome,open_chrome,system
+start chrome,open_chrome,system
+open calculator,open_calculator,system
+launch calculator,open_calculator,system
+start calculator,open_calculator,system
+open file explorer,open_explorer,system
+open explorer,open_explorer,system
+launch file explorer,open_explorer,system
+close window,close_window,system
+close this,close_window,system
+close current window,close_window,system
+close chrome,close_chrome,system
+close notepad,close_notepad,system
+what is the time,get_time,info
+tell me the time,get_time,info
+what time is it,get_time,info
+current time,get_time,info
+what is the date,get_date,info
+tell me the date,get_date,info
+what date is it,get_date,info
+today's date,get_date,info
+search google for,google_search,web
+search for,google_search,web
+google,google_search,web
+look up,google_search,web
+open youtube,open_youtube,web
+go to youtube,open_youtube,web
+launch youtube,open_youtube,web
+open facebook,open_facebook,web
+open twitter,open_twitter,web
+open linkedin,open_linkedin,web
+open github,open_github,web
+weather,get_weather,info
+weather forecast,get_weather,info
+how is the weather,get_weather,info
+temperature,get_weather,info
+send email,send_email,action
+compose email,send_email,action
+write email,send_email,action
+play music,play_music,media
+play song,play_music,media
+play a song,play_music,media
+stop music,stop_music,media
+pause music,stop_music,media
+volume up,volume_up,system
+increase volume,volume_up,system
+volume down,volume_down,system
+decrease volume,volume_down,system
+mute,mute_volume,system
+unmute,unmute_volume,system
+take screenshot,take_screenshot,system
+capture screen,take_screenshot,system
+screenshot,take_screenshot,system
+lock screen,lock_screen,system
+lock computer,lock_screen,system
+lock my pc,lock_screen,system
+shutdown,shutdown_system,system
+shut down,shutdown_system,system
+turn off computer,shutdown_system,system
+restart,restart_system,system
+restart computer,restart_system,system
+reboot,restart_system,system
+sleep,sleep_system,system
+put computer to sleep,sleep_system,system
+who are you,about_jarvis,info
+what is your name,about_jarvis,info
+tell me about yourself,about_jarvis,info
+what can you do,about_jarvis,info
+help,show_help,info
+commands,show_help,info
+what commands,show_help,info
+thank you,acknowledge,info
+thanks,acknowledge,info
+good job,acknowledge,info
+goodbye,exit,control
+bye,exit,control
+exit,exit,control
+quit,exit,control
+stop,stop,control

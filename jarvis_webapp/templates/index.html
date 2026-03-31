@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S. — AI Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jarvis.css') }}?v=3.2">
+</head>
+<body>
+<div class="hex-grid"></div>
+<div class="scanlines"></div>
+
+<!-- BOOT SCREEN -->
+<div id="boot-screen">
+  <div class="boot-logo">J.A.R.V.I.S.</div>
+  <div class="boot-sub">JUST A RATHER VERY INTELLIGENT SYSTEM — v3.0</div>
+  <div class="boot-log" id="boot-log"></div>
+  <div class="boot-bar"><div class="boot-progress" id="boot-progress"></div></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- REMINDER ALERT -->
+<div id="reminder-alert" class="reminder-alert hidden">
+  <div class="ra-icon">🔔</div>
+  <div class="ra-text" id="ra-text">Reminder</div>
+  <button onclick="dismissReminder()">DISMISS</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <header id="header" class="panel">
+    <div class="hdr-left">
+      <div class="hdr-logo">J<span>.</span>A<span>.</span>R<span>.</span>V<span>.</span>I<span>.</span>S<span>.</span></div>
+      <div class="hdr-sub">AI COMMAND CENTER // FLASK + SOCKETIO // v3.0</div>
+    </div>
+    <div class="hdr-center">
+      <div id="live-clock">00:00:00</div>
+      <div id="live-date">LOADING...</div>
+    </div>
+    <div class="hdr-right">
+      <div class="conn-badge" id="conn-badge">
+        <span class="conn-dot" id="conn-dot"></span>
+        <span id="conn-label">CONNECTING</span>
+      </div>
+      <div class="hdr-stats-row">
+        <span class="hdr-mini">AI: <span class="gold" id="hdr-ai">CLAUDE</span></span>
+        <span class="hdr-mini">CMD: <span class="cyan" id="hdr-cmdcount">0</span></span>
+        <span class="hdr-mini">NOTES: <span class="cyan" id="hdr-notecount">0</span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ LEFT SIDEBAR ═══ -->
+  <aside id="left">
+
+    <!-- Arc Reactor -->
+    <div class="panel arc-panel">
+      <div class="arc-reactor" id="arcReactor" onclick="toggleVoice()" title="Click to toggle voice input">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <radialGradient id="cg" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#00ffff"/>
+              <stop offset="60%" stop-color="#00d4ff"/>
+              <stop offset="100%" stop-color="#001a44"/>
+            </radialGradient>
+          </defs>
+          <circle cx="60" cy="60" r="55" fill="none" stroke="rgba(230,57,70,.15)" stroke-width="1"/>
+          <g class="ring r1" filter="url(#glow)">
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#e63946" stroke-width="2"
+              stroke-dasharray="10 18" stroke-linecap="round"/>
+          </g>
+          <g class="ring r2" filter="url(#glow)">
+            <circle cx="60" cy="60" r="38" fill="none" stroke="#ffd700" stroke-width="1.5"
+              stroke-dasharray="6 12" stroke-linecap="round"/>
+          </g>
+          <g class="ring r3" filter="url(#glow)">
+            <circle cx="60" cy="60" r="28" fill="none" stroke="#00d4ff" stroke-width="2"
+              stroke-dasharray="4 8" stroke-linecap="round"/>
+          </g>
+          <g class="arc-core-grp">
+            <circle cx="60" cy="60" r="16" fill="url(#cg)" opacity=".9"/>
+            <circle cx="60" cy="60" r="11" fill="#00d4ff" opacity=".7"/>
+            <circle cx="60" cy="60" r="5" fill="#ffffff" opacity=".95"/>
+          </g>
+        </svg>
+        <div class="arc-label">CLICK FOR VOICE</div>
+      </div>
+      <div class="arc-info">
+        <div class="arc-state" id="arc-state">SYSTEMS ONLINE</div>
+        <div class="arc-sub" id="arc-sub">READY FOR COMMANDS</div>
+        <div class="viz" id="viz">
+          <div class="vb"></div><div class="vb"></div><div class="vb"></div>
+          <div class="vb"></div><div class="vb"></div><div class="vb"></div>
+          <div class="vb"></div><div class="vb"></div><div class="vb"></div>
+          <div class="vb"></div><div class="vb"></div><div class="vb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Diagnostics -->
+    <div class="panel sys-panel">
+      <div class="panel-title">⚡ SYSTEM DIAGNOSTICS</div>
+      <div class="stats-body">
+        <div class="stat-item">
+          <div class="stat-row"><span class="stat-lbl">CPU</span><span class="stat-val" id="cpu-val">--</span></div>
+          <div class="stat-bar"><div class="stat-fill red" id="cpu-bar" style="width:0%"></div></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-row"><span class="stat-lbl">RAM</span><span class="stat-val" id="ram-val">--</span></div>
+          <div class="stat-bar"><div class="stat-fill cyan" id="ram-bar" style="width:0%"></div></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-row"><span class="stat-lbl">DISK</span><span class="stat-val" id="disk-val">--</span></div>
+          <div class="stat-bar"><div class="stat-fill gold" id="disk-bar" style="width:0%"></div></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-row"><span class="stat-lbl">BATTERY</span><span class="stat-val" id="bat-val">--</span></div>
+          <div class="stat-bar"><div class="stat-fill green" id="bat-bar" style="width:0%"></div></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-row"><span class="stat-lbl">NET ↑</span><span class="stat-val cyan" id="net-sent">--</span></div>
+          <div class="stat-row"><span class="stat-lbl">NET ↓</span><span class="stat-val cyan" id="net-recv">--</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Commands -->
+    <div class="panel quick-panel">
+      <div class="panel-title">⚡ QUICK COMMANDS</div>
+      <div class="quick-body">
+        <button class="qbtn" onclick="sendCmd('What time is it?')">⏰ Time</button>
+        <button class="qbtn" onclick="sendCmd('What is today\'s date?')">📅 Date</button>
+        <button class="qbtn" onclick="sendCmd('Weather in Chennai')">🌤 Weather</button>
+        <button class="qbtn" onclick="sendCmd('Daily briefing')">📋 Briefing</button>
+        <button class="qbtn" onclick="sendCmd('Latest tech news')">📰 News</button>
+        <button class="qbtn" onclick="sendCmd('Tell me a joke')">😄 Joke</button>
+        <button class="qbtn" onclick="sendCmd('Give me a motivational quote')">💡 Quote</button>
+        <button class="qbtn" onclick="sendCmd('Fun fact')">🔍 Fun Fact</button>
+        <button class="qbtn" onclick="sendCmd('Generate password 20')">🔐 Password</button>
+        <button class="qbtn" onclick="sendCmd('Trivia question')">🎯 Trivia</button>
+        <button class="qbtn" onclick="sendCmd('System info')">🖥 System</button>
+        <button class="qbtn" onclick="sendCmd('Who are you?')">🤖 About</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ═══ CENTER ═══ -->
+  <main id="center">
+
+    <!-- News Ticker -->
+    <div class="ticker-wrap panel">
+      <div class="ticker-label">LIVE INTEL</div>
+      <div class="ticker-track" id="ticker-track">
+        <span>JARVIS AI COMMAND CENTER ONLINE — ALL SYSTEMS OPERATIONAL — READY FOR INPUT</span>
+      </div>
+    </div>
+
+    <!-- Conversation -->
+    <div class="panel convo-panel">
+      <div class="panel-title">
+        🧠 NEURAL INTERFACE — CONVERSATION
+        <span class="pt-right" id="msg-count-lbl">0 EXCHANGES</span>
+      </div>
+      <div id="convo" class="convo-body"></div>
+      <div class="input-zone">
+        <button class="icon-btn mic-btn" id="mic-btn" onclick="toggleVoice()" title="Voice Input">🎤</button>
+        <input id="cmd-input" type="text"
+          placeholder="TYPE A COMMAND OR ASK ANYTHING..."
+          onkeydown="if(event.key==='Enter')sendCmd()">
+        <button class="icon-btn send-btn" onclick="sendCmd()" title="Send">⚡</button>
+        <button class="icon-btn clear-btn" onclick="clearConvo()" title="Clear">🗑</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══ RIGHT SIDEBAR ═══ -->
+  <aside id="right">
+
+    <!-- Tabs -->
+    <div class="panel tabs-panel">
+      <div class="tab-bar">
+        <button class="tab active" data-tab="history" onclick="switchTab('history')">HISTORY</button>
+        <button class="tab" data-tab="notes" onclick="switchTab('notes')">NOTES</button>
+        <button class="tab" data-tab="tasks" onclick="switchTab('tasks')">TASKS</button>
+        <button class="tab" data-tab="reminders" onclick="switchTab('reminders')">ALERTS</button>
+      </div>
+
+      <!-- History Tab -->
+      <div id="tab-history" class="tab-content active">
+        <div class="tab-toolbar">
+          <button class="tbtn" onclick="loadHistory()">⟳ Refresh</button>
+          <button class="tbtn danger" onclick="clearHistory()">🗑 Clear</button>
+        </div>
+        <div class="tab-list" id="history-list">
+          <div class="empty-state">No history yet, sir.</div>
+        </div>
+      </div>
+
+      <!-- Notes Tab -->
+      <div id="tab-notes" class="tab-content">
+        <div class="tab-toolbar">
+          <button class="tbtn" onclick="showAddNote()">+ Add</button>
+          <button class="tbtn" onclick="loadNotes()">⟳ Refresh</button>
+        </div>
+        <div class="add-form hidden" id="note-form">
+          <input class="form-input" id="note-title" placeholder="Title...">
+          <textarea class="form-textarea" id="note-content" placeholder="Note content..."></textarea>
+          <div class="form-actions">
+            <button class="fbtn save" onclick="addNote()">Save</button>
+            <button class="fbtn cancel" onclick="hideAddNote()">Cancel</button>
+          </div>
+        </div>
+        <div class="tab-list" id="notes-list">
+          <div class="empty-state">No notes yet, sir.</div>
+        </div>
+      </div>
+
+      <!-- Tasks Tab -->
+      <div id="tab-tasks" class="tab-content">
+        <div class="tab-toolbar">
+          <button class="tbtn" onclick="showAddTask()">+ Add</button>
+          <button class="tbtn" onclick="loadTasks()">⟳ Refresh</button>
+        </div>
+        <div class="add-form hidden" id="task-form">
+          <input class="form-input" id="task-title" placeholder="Task description...">
+          <select class="form-select" id="task-priority">
+            <option value="high">🔴 High Priority</option>
+            <option value="medium" selected>🟡 Medium Priority</option>
+            <option value="low">🟢 Low Priority</option>
+          </select>
+          <div class="form-actions">
+            <button class="fbtn save" onclick="addTask()">Add Task</button>
+            <button class="fbtn cancel" onclick="hideAddTask()">Cancel</button>
+          </div>
+        </div>
+        <div class="tab-list" id="tasks-list">
+          <div class="empty-state">Task list clear, sir.</div>
+        </div>
+      </div>
+
+      <!-- Reminders Tab -->
+      <div id="tab-reminders" class="tab-content">
+        <div class="tab-toolbar">
+          <button class="tbtn" onclick="showAddReminder()">+ Add</button>
+          <button class="tbtn" onclick="loadReminders()">⟳ Refresh</button>
+        </div>
+        <div class="add-form hidden" id="reminder-form">
+          <input class="form-input" id="rem-text" placeholder="Reminder text...">
+          <input class="form-input" id="rem-time" type="time" title="Remind at time (optional)">
+          <div class="form-actions">
+            <button class="fbtn save" onclick="addReminder()">Set Reminder</button>
+            <button class="fbtn cancel" onclick="hideAddReminder()">Cancel</button>
+          </div>
+        </div>
+        <div class="tab-list" id="reminders-list">
+          <div class="empty-state">No active reminders, sir.</div>
+        </div>
+      </div>
+
+    </div><!-- /tabs-panel -->
+
+    <!-- Command Reference -->
+    <div class="panel ref-panel">
+      <div class="panel-title">📡 COMMAND REFERENCE</div>
+      <div class="ref-body">
+        <div class="ref-cat">
+          <div class="ref-cat-title">⚙ SYSTEM</div>
+          <span class="ref-tag" onclick="sendCmd('Open Chrome')">Open Chrome</span>
+          <span class="ref-tag" onclick="sendCmd('Take screenshot')">Screenshot</span>
+          <span class="ref-tag" onclick="sendCmd('Lock screen')">Lock Screen</span>
+          <span class="ref-tag" onclick="sendCmd('List processes')">Processes</span>
+        </div>
+        <div class="ref-cat">
+          <div class="ref-cat-title">🌐 WEB</div>
+          <span class="ref-tag" onclick="sendCmd('Open YouTube')">YouTube</span>
+          <span class="ref-tag" onclick="sendCmd('Open GitHub')">GitHub</span>
+          <span class="ref-tag" onclick="sendCmd('Search Google for Python')">Google Search</span>
+        </div>
+        <div class="ref-cat">
+          <div class="ref-cat-title">🧮 TOOLS</div>
+          <span class="ref-tag" onclick="sendCmd('Calculate 15 * 24 + 100')">Calculate</span>
+          <span class="ref-tag" onclick="sendCmd('Convert 5 km to miles')">Convert</span>
+          <span class="ref-tag" onclick="sendCmd('Translate hello to Tamil')">Translate</span>
+          <span class="ref-tag" onclick="sendCmd('Analyze sentiment I love this project')">Sentiment</span>
+        </div>
+        <div class="ref-cat">
+          <div class="ref-cat-title">🔍 KNOWLEDGE</div>
+          <span class="ref-tag" onclick="sendCmd('Who is Alan Turing?')">Who is</span>
+          <span class="ref-tag" onclick="sendCmd('What is quantum computing?')">What is</span>
+          <span class="ref-tag" onclick="sendCmd('Explain machine learning')">Explain</span>
+        </div>
+        <div class="ref-cat">
+          <div class="ref-cat-title">📝 PRODUCTIVITY</div>
+          <span class="ref-tag" onclick="sendCmd('Add note Project deadline is next Friday')">Add Note</span>
+          <span class="ref-tag" onclick="sendCmd('Show my notes')">Show Notes</span>
+          <span class="ref-tag" onclick="sendCmd('Add task Review pull requests')">Add Task</span>
+          <span class="ref-tag" onclick="sendCmd('Remind me to call the client')">Set Reminder</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer id="footer" class="panel">
+    <div class="ft-item">UPTIME: <span class="cyan" id="uptime">00:00:00</span></div>
+    <div class="ft-item ticker-footer" id="ticker-footer">JARVIS AI COMMAND CENTER — ALL SYSTEMS NOMINAL</div>
+    <div class="ft-item">VOICE: <span id="ft-voice" class="dim">STANDBY</span> &nbsp;|&nbsp; SOCKET: <span id="ft-socket" class="dim">—</span></div>
+  </footer>
+
+</div><!-- /app -->
+
+<script src="{{ url_for('static', filename='js/jarvis.js') }}?v=3.2"></script>
+</body>
+</html>
